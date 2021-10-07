@@ -1,0 +1,11 @@
+[package]
+name = "meowc"
+version = "0.1.0"
+edition = "2018"
+authors = ["Meow Contributors"]
+description = "The standard compiler for the Meow programming language"
+repository = "https://github.com/cat-dev-group/meow/"
+license = "MIT"
+
+[dependencies]
+clap = "3.0.0-beta"

@@ -8,8 +8,8 @@ produce such a document someday, but this is what we have for now.
 
 ## Dependencies
 
-- rustc (the Rust compiler).
-- mdbook (use `cargo install mdbook` to install it).
+- rustc (the Rust compiler)
+- mdbook (use `cargo install mdbook` to install it)
 
 ## Build steps
 

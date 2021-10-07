@@ -1,6 +1,7 @@
 [book]
+title = "reference"
 authors = ["dawnofmidnight"]
+description = "The reference for the Meow programming language."
+src = "src"
 language = "en"
 multilingual = false
-src = "src"
-title = "reference"
