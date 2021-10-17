@@ -33,15 +33,17 @@ impl<'a> Lexer<'a> {
 
         keywords.insert("true", Token::Bool(true));
         keywords.insert("false", Token::Bool(false));
-        keywords.insert("const", Token::Const);
-        keywords.insert("elif", Token::Elif);
+        keywords.insert("and", Token::And);
         keywords.insert("else", Token::Else);
+        keywords.insert("for", Token::For);
         keywords.insert("fun", Token::Fun);
         keywords.insert("if", Token::If);
         keywords.insert("import", Token::Import);
         keywords.insert("let", Token::Let);
         keywords.insert("match", Token::Match);
+        keywords.insert("mut", Token::Mut);
         keywords.insert("return", Token::Return);
+        keywords.insert("while", Token::While);
 
         keywords
     }
@@ -208,17 +210,20 @@ impl<'a> Iterator for Lexer<'a> {
             (';', _) => self.advance_with(Token::Semicolon),
             (',', _) => self.advance_with(Token::Comma),
             ('.', _) => self.advance_with(Token::Dot),
-            ('!', _) => self.advance_with(Token::Exclamation),
-            ('?', _) => self.advance_with(Token::Question),
-            ('&', _) => self.advance_with(Token::Ampersand),
-            ('|', _) => self.advance_with(Token::Pipe),
+            ('&', _) => self.advance_with(Token::And),
+            ('|', _) => self.advance_with(Token::Or),
+            ('!', _) => self.advance_with(Token::Not),
             ('\\', _) => self.advance_with(Token::Backslash),
 
             (
                 '\n' | '\r' | '\t' | ' ' | '\u{000B}' | '\u{000C}' | '\u{0085}' | '\u{200E}'
                 | '\u{200F}' | '\u{2028}' | '\u{2029}',
                 _,
-            ) => self.advance_with(Token::Whitespace),
+            ) => { 
+                self.advance();
+                self.next()
+            },
+
             (c, _) => self.advance_with(Token::Invalid(LexerError::UnknownChar(c))),
         }
     }

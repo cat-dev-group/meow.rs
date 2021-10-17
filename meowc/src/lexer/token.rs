@@ -2,7 +2,6 @@ use std::fmt;
 
 #[derive(Debug)]
 pub enum Token {
-    // Identifier
     Ident(String),
 
     // Literals
@@ -10,6 +9,21 @@ pub enum Token {
     Int(u64),
     Float(f64),
     Bool(bool),
+
+    // Keywords
+    And,
+    Else,
+    For,
+    Fun,
+    If,
+    Import,
+    Let,
+    Match,
+    Mut,
+    Not,
+    Or,
+    Return,
+    While,
 
     // Operators
     Eq,
@@ -32,25 +46,9 @@ pub enum Token {
     Semicolon,
     Comma,
     Dot,
-    Exclamation,
-    Question,
-    Ampersand,
-    Pipe,
     Backslash,
 
-    // Keywords
-    Const,
-    Elif,
-    Else,
-    Fun,
-    If,
-    Import,
-    Let,
-    Match,
-    Return,
-
     // Miscellaneous
-    Whitespace,
     EndOfInput,
     Invalid(LexerError),
 }
