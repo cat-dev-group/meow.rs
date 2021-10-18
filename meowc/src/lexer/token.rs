@@ -1,14 +1,14 @@
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Token {
     Ident(String),
 
     // Literals
     String(String),
-    Int(u64),
-    Float(f64),
-    Bool(bool),
+    Int(String),
+    Float(String),
+    Bool(String),
 
     // Keywords
     And,
@@ -43,17 +43,20 @@ pub enum Token {
     CloseBracket,
     OpenBrace,
     CloseBrace,
-    Semicolon,
+    Semi,
     Comma,
     Dot,
+    Amp,
+    Pipe,
+    Bang,
     Backslash,
 
     // Miscellaneous
-    EndOfInput,
+    Eof,
     Invalid(LexerError),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum LexerError {
     InvalidEscapeSequence(char),
     Expected(char),

@@ -3,8 +3,14 @@
 This book is the primary reference for the Meow programming language.
 
 This document is not normative. It may include details specific to `meowc`, and
-should not be taken as a specification for the Rust language. We intend to
-produce such a document someday, but this is what we have for now.
+should not be taken as a specification for the Meow language.
+
+## What this is
+
+This book contains two types of material:
+- Chapters that informally describe each language construct and their use.
+- Chapters that informally describe the memory model, concurrency model,
+  runtime services, linkage model, and debugging facilities.
 
 ## What this is not
 

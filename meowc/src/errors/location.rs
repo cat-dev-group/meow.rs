@@ -7,7 +7,7 @@ use std::path::Path;
 pub struct Position {
     pub index: usize,
     pub line: u32,
-    pub col: u32,
+    pub column: u32,
 }
 
 impl Position {
@@ -16,7 +16,7 @@ impl Position {
         Position {
             index: 0,
             line: 1,
-            col: 1,
+            column: 1,
         }
     }
 
@@ -24,14 +24,16 @@ impl Position {
     pub fn advance(&mut self, passed_newline: bool) {
         if passed_newline {
             self.line += 1;
-            self.col = 1;
+            self.column = 1;
         } else {
-            self.col += 1;
+            self.column += 1;
         }
         self.index += 1;
     }
 }
 
+/// An ending position. Error reporting doesn't need to report
+/// the ending line/column of an error so it isn't stored here.
 #[derive(Debug)]
 pub struct EndPosition {
     pub index: usize,
@@ -58,7 +60,7 @@ impl fmt::Display for Location<'_> {
             "{}:{}:{}",
             self.filename.display(),
             self.start.line,
-            self.start.col
+            self.start.column,
         )
     }
 }

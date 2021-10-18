@@ -3,7 +3,7 @@
 This book is the primary reference for the Meow programming language.
 
 This document is not normative. It may include details specific to `meowc`, and
-should not be taken as a specification for the Rust language. We intend to
+should not be taken as a specification for the Meow language. We intend to
 produce such a document someday, but this is what we have for now.
 
 ## Dependencies
@@ -13,7 +13,7 @@ produce such a document someday, but this is what we have for now.
 
 ## Build steps
 
-To build the project, follow the steps given below:
+To build the reference, follow the steps given below:
 
 Clone the project by running the following command:
 

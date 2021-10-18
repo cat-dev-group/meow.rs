@@ -1,11 +1,14 @@
 //! Lexing is the simplest compilation phase. Its goal is to convert a stream
-//! of characters into a Vec<Token> that can then be fed into the parser.
+//! of characters into a `Vec<Token>` that can then be fed into the parser.
 
+#[cfg(test)]
+mod tests;
 mod token;
 
 use crate::errors::location::{EndPosition, Locatable, Location, Position};
 use std::{collections::HashMap, path::Path, str::Chars};
 use token::{LexerError, Token};
+use unicode_xid::UnicodeXID;
 
 pub struct Lexer<'a> {
     current: char,
@@ -31,8 +34,8 @@ impl<'a> Lexer<'a> {
     pub fn get_keywords() -> HashMap<&'static str, Token> {
         let mut keywords: HashMap<&str, Token> = HashMap::new();
 
-        keywords.insert("true", Token::Bool(true));
-        keywords.insert("false", Token::Bool(false));
+        keywords.insert("true", Token::Bool("true".to_string()));
+        keywords.insert("false", Token::Bool("false".to_string()));
         keywords.insert("and", Token::And);
         keywords.insert("else", Token::Else);
         keywords.insert("for", Token::For);
@@ -42,6 +45,8 @@ impl<'a> Lexer<'a> {
         keywords.insert("let", Token::Let);
         keywords.insert("match", Token::Match);
         keywords.insert("mut", Token::Mut);
+        keywords.insert("not", Token::Not);
+        keywords.insert("or", Token::Or);
         keywords.insert("return", Token::Return);
         keywords.insert("while", Token::While);
 
@@ -108,6 +113,16 @@ impl<'a> Lexer<'a> {
         self.get_slice_containing_current_token()
     }
 
+    fn lex_ident_or_keyword(&mut self) -> IterElem<'a> {
+        let word = self.advance_while(|current, _| UnicodeXID::is_xid_continue(current));
+        let location = self.locate();
+
+        match self.keywords.get(word) {
+            Some(keyword) => Some((keyword.clone(), location)),
+            None => Some((Token::Ident(word.to_string()), location)),
+        }
+    }
+
     fn lex_integer(&mut self) -> String {
         let start = self.current_position.index;
 
@@ -126,12 +141,10 @@ impl<'a> Lexer<'a> {
             self.advance();
             let float_string = integer_string + "." + &self.lex_integer();
 
-            let float = float_string.parse().unwrap();
-            Some((Token::Float(float), self.locate()))
+            Some((Token::Float(float_string), self.locate()))
         } else {
-            let integer = integer_string.parse().unwrap();
             let location = self.locate();
-            Some((Token::Int(integer), location))
+            Some((Token::Int(integer_string), location))
         }
     }
 
@@ -161,7 +174,7 @@ impl<'a> Lexer<'a> {
         self.expect('"', Token::String(contents))
     }
 
-    fn lex_singleline_comment(&mut self) -> IterElem<'a> {
+    fn lex_comment(&mut self) -> IterElem<'a> {
         self.advance_while(|current, _| current != '\n');
         self.next()
     }
@@ -171,21 +184,25 @@ impl<'a> Iterator for Lexer<'a> {
     type Item = (Token, Location<'a>);
 
     fn next(&mut self) -> Option<Self::Item> {
+        self.token_start_position = self.current_position;
+
         match (self.current, self.next) {
             ('\0', _) => {
                 if self.current_position.index > self.file_contents.len() {
                     None
                 } else {
-                    self.advance_with(Token::EndOfInput)
+                    self.advance_with(Token::Eof)
                 }
             }
+
+            (c, _) if UnicodeXID::is_xid_start(c) || c == '_' => self.lex_ident_or_keyword(),
 
             // Literals
             ('"', _) => self.lex_string(),
             (c, _) if c.is_digit(10) => self.lex_number(),
 
             // Comments
-            ('/', '/') => self.lex_singleline_comment(),
+            ('/', '/') => self.lex_comment(),
 
             // Double char tokens
             ('=', '=') => self.advance2_with(Token::EqEq),
@@ -207,22 +224,22 @@ impl<'a> Iterator for Lexer<'a> {
             (']', _) => self.advance_with(Token::CloseBracket),
             ('{', _) => self.advance_with(Token::OpenBrace),
             ('}', _) => self.advance_with(Token::CloseBrace),
-            (';', _) => self.advance_with(Token::Semicolon),
+            (';', _) => self.advance_with(Token::Semi),
             (',', _) => self.advance_with(Token::Comma),
             ('.', _) => self.advance_with(Token::Dot),
-            ('&', _) => self.advance_with(Token::And),
-            ('|', _) => self.advance_with(Token::Or),
-            ('!', _) => self.advance_with(Token::Not),
+            ('&', _) => self.advance_with(Token::Amp),
+            ('|', _) => self.advance_with(Token::Pipe),
+            ('!', _) => self.advance_with(Token::Bang),
             ('\\', _) => self.advance_with(Token::Backslash),
 
             (
                 '\n' | '\r' | '\t' | ' ' | '\u{000B}' | '\u{000C}' | '\u{0085}' | '\u{200E}'
                 | '\u{200F}' | '\u{2028}' | '\u{2029}',
                 _,
-            ) => { 
+            ) => {
                 self.advance();
                 self.next()
-            },
+            }
 
             (c, _) => self.advance_with(Token::Invalid(LexerError::UnknownChar(c))),
         }
