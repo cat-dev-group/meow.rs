@@ -1,4 +1,4 @@
-use super::{Lexer, Token, Token::*};
+use meowc::lexer::{token::Token, token::Token::*, Lexer};
 use std::path::Path;
 
 fn test_tokens(input: &str, mut expected: Vec<Token>) {

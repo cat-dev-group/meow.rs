@@ -1,9 +1,7 @@
 //! Lexing is the simplest compilation phase. Its goal is to convert a stream
 //! of characters into a `Vec<Token>` that can then be fed into the parser.
 
-#[cfg(test)]
-mod tests;
-mod token;
+pub mod token;
 
 use crate::errors::location::{EndPosition, Locatable, Location, Position};
 use std::{collections::HashMap, path::Path, str::Chars};

@@ -7,12 +7,9 @@
 //! Each phase corresponds to a source folder with roughly the same name, and are
 //! labeled through the steps in this file.
 
-mod errors;
-mod lexer;
-
 use ansi_term::Colour::Red;
 use clap::Clap;
-use lexer::Lexer;
+use meowc::lexer::Lexer;
 use std::{
     fs::File,
     io::{BufReader, Read},
