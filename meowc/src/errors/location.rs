@@ -34,7 +34,7 @@ impl Position {
 
 /// An ending position. Error reporting doesn't need to report
 /// the ending line/column of an error so it isn't stored here.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EndPosition {
     pub index: usize,
 }
@@ -46,7 +46,7 @@ impl EndPosition {
 }
 
 /// A source location for a given Ast node or other construct.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Location<'a> {
     pub filename: &'a Path,
     pub start: Position,
